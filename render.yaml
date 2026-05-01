@@ -6,6 +6,6 @@ services:
     startCommand: "gunicorn ai_phone_advisor.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.9
+        value: 3.11.10
       - key: DJANGO_SETTINGS_MODULE
         value: ai_phone_advisor.settings
