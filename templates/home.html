@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<header class="masthead">
+    <div class="container text-center text-white">
+        <h1 class="mb-5 animate__animated animate__fadeInDown">Qidiruv turini tanlang</h1>
+        <div class="d-flex justify-content-center gap-4 animate__animated animate__fadeInUp">
+            <a href="{% url 'model_search_page' %}" class="custom-btn">
+                <span>🔍</span> Model bo'yicha
+            </a>
+            <a href="{% url 'price_search_page' %}" class="custom-btn">
+                <span>💰</span> Budjet bo'yicha
+            </a>
+        </div>
+    </div>
+</header>
+{% endblock %}

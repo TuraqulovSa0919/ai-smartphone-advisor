@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<header class="masthead d-flex align-items-center" style="background: var(--main-bg); min-height: 70vh; transition: all 0.4s ease;">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-xl-7">
+
+                <h1 class="mb-4 fw-bold" style="color: var(--text-color); font-size: 3.5rem;">
+                    Smartfon Qidirish
+                </h1>
+                
+                <p class="lead mb-5" style="color: var(--text-color); opacity: 0.8;">
+                    AI orqali eng yaxshi model tahlilini oling
+                </p>
+
+                <form action="{% url 'result_model_search_page' %}" method="GET" id="searchForm">
+                    <div class="input-group input-group-lg shadow-lg" style="border-radius: 15px; overflow: hidden;">
+
+                        <input class="form-control border-0"
+                               id="searchInput"
+                               name="q"
+                               type="text"
+                               placeholder="Modelni kiriting (masalan: iPhone 15)..."
+                               required
+                               style="padding: 1.5rem; background: var(--bg-header-footer); color: var(--text-color);">
+
+                        <button class="btn btn-primary px-5 fw-bold" type="submit" id="searchBtn">
+
+                            <span id="btnText">
+                                <i class="bi bi-search me-2"></i>Qidirish
+                            </span>
+
+                            <span id="btnSpinner" class="d-none">
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                AI tahlil qilmoqda...
+                            </span>
+
+                        </button>
+
+                    </div>
+                </form>
+
+                <div class="mt-5">
+                    <a href="{% url 'home_page' %}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm" style="border-width: 2px;">
+                        <i class="bi bi-arrow-left me-2"></i>Asosiy sahifaga qaytish
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+document.getElementById('searchForm').onsubmit = function() {
+    var btn = document.getElementById('searchBtn');
+    var input = document.getElementById('searchInput');
+    var text = document.getElementById('btnText');
+    var spinner = document.getElementById('btnSpinner');
+
+    if (input.value.trim() !== "") {
+        btn.disabled = true;
+        text.classList.add('d-none');
+        spinner.classList.remove('d-none');
+        btn.style.opacity = "0.8";
+        btn.style.cursor = "not-allowed";
+    }
+};
+
+window.addEventListener('pageshow', function () {
+    var btn = document.getElementById('searchBtn');
+    var text = document.getElementById('btnText');
+    var spinner = document.getElementById('btnSpinner');
+
+    if (btn) {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.style.cursor = "pointer";
+
+        if (text) text.classList.remove('d-none');
+        if (spinner) spinner.classList.add('d-none');
+    }
+});
+</script>
+
+{% endblock %}

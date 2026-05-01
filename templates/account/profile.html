@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 text-center">
+            <div class="card shadow-sm border-0 p-5" style="border-radius: 20px; background-color: var(--bg-header-footer);">                
+                <i class="bi bi-person-badge text-primary mb-3" style="font-size: 5rem;"></i>                
+                <h2 class="fw-bold" style="color: var(--text-color);">
+                    Xush kelibsiz, {{ user.username|title }}!
+                </h2>
+                <p class="mb-4" style="color: var(--text-color); opacity: 0.7;">
+                    Siz tizimga muvaffaqiyatli kirdingiz. Endi barcha qidiruv tizimlaridan va sun'iy intellekt tahlillaridan cheklovsiz foydalanishingiz mumkin.
+                </p>
+                
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'model_search_page' %}" class="btn btn-primary px-4 py-2" style="border-radius: 10px;">
+                        <i class="bi bi-search me-2"></i> Qidiruvni boshlash
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

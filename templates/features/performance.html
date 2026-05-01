@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Global Performance Top 30 (2026)</h1>
+        <p class="text-muted">AnTuTu v11 reytingi bo'yicha dunyodagi eng quvvatli smartfonlar ro'yxati</p>
+        <hr class="w-25 mx-auto border-danger border-2 opacity-75">
+    </div>
+
+    <div class="row g-4">
+        {% for phone in performance_phones %}
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 position-relative card-hover-effect">
+                
+                <div class="position-absolute top-0 start-0 bg-danger text-white px-3 py-2 fw-bold shadow-sm" 
+                     style="border-bottom-right-radius: 20px; z-index: 10;">
+                    #{{ phone.rank }}
+                </div>
+
+                <div class="row g-0 align-items-center">
+                    <div class="col-md-4 p-4 text-center bg-light">
+                        {% if phone.img_url %}
+                            <img src="{{ phone.img_url }}" class="img-fluid rounded-3" 
+                                style="max-height: 280px; object-fit: contain;"
+                                alt="{{ phone.model }}">
+                        {% else %}
+                            <div class="py-5 text-muted">
+                                <i class="bi bi-speedometer2 fs-1"></i><br>Rasm yuklanmagan
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-8">
+                        <div class="card-body p-4 pt-5 pt-md-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h2 class="card-title fw-bold text-danger mb-0">{{ phone.brand }} {{ phone.model }}</h2>
+                                    <div class="mt-2">
+                                        <span class="badge bg-dark">AnTuTu v11: {{ phone.antutu_score }}</span>
+                                        <span class="badge border border-danger text-danger bg-transparent">{{ phone.ram }} RAM</span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-muted d-block text-uppercase x-small">Batareya</small>
+                                    <span class="fw-bold text-dark">{{ phone.battery }}</span>
+                                </div>
+                            </div>
+
+                            <div class="row row-cols-2 row-cols-md-4 g-2 mb-4">
+                                <div class="col">
+                                    <div class="p-2 border rounded-3 bg-danger bg-opacity-10 text-center h-100 d-flex flex-column justify-content-center">
+                                        <small class="text-muted d-block x-small text-uppercase mb-1">CPU</small>
+                                        <span class="fw-bold text-dark small lh-sm">{{ phone.cpu }}</span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="p-2 border rounded-3 bg-danger bg-opacity-10 text-center h-100 d-flex flex-column justify-content-center">
+                                        <small class="text-muted d-block x-small text-uppercase mb-1">GPU</small>
+                                        <span class="fw-bold text-dark small lh-sm">{{ phone.gpu }}</span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="p-2 border rounded-3 bg-danger bg-opacity-10 text-center h-100 d-flex flex-column justify-content-center">
+                                        <small class="text-muted d-block x-small text-uppercase mb-1">Kamera</small>
+                                        <span class="fw-bold text-dark small lh-sm">{{ phone.camera }}</span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="p-2 border rounded-3 bg-danger bg-opacity-10 text-center h-100 d-flex flex-column justify-content-center">
+                                        <small class="text-muted d-block x-small text-uppercase mb-1">Korpus</small>
+                                        <span class="fw-bold text-dark small lh-sm">{{ phone.body }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 p-3 rounded-3 border-start border-4 border-danger bg-danger bg-opacity-10">
+                                <h6 class="fw-bold text-danger small mb-1"><i class="bi bi-robot me-2"></i> AI Ekspert tahlili:</h6>
+                                <p class="mb-0 text-dark fst-italic small">"{{ phone.ai_comment }}"</p>
+                            </div>
+
+                            <div class="p-3 rounded-3 bg-light border">
+                                <h6 class="fw-bold text-secondary small mb-1"><i class="bi bi-chat-left-text me-2"></i> Foydalanuvchilar fikri:</h6>
+                                <p class="mb-0 text-muted small">{{ phone.user_feedback }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h3 class="text-muted">Ma'lumotlar topilmadi.</h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .x-small { font-size: 0.65rem; letter-spacing: 0.5px; }
+    .lh-sm { line-height: 1.2; }
+    .card-hover-effect { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .card-hover-effect:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+    }
+</style>
+{% endblock %}

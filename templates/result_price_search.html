@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            
+            {% if results %}
+                {% for item in results %}
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-4">
+                    <div class="row g-0">
+                        <div class="col-md-5 bg-white d-flex align-items-center justify-content-center p-4 border-end">
+                            {% if item.image_url and item.image_url != 'None' %}
+                                <img src="{{ item.image_url }}" class="img-fluid" alt="{{ item.brand_name }} {{ item.model_name }}" style="max-height: 380px; object-fit: contain;" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x400?text=Rasm+Topilmadi';">
+                            {% else %}
+                                <div class="text-center text-muted">
+                                    <i class="bi bi-phone text-secondary" style="font-size: 5rem;"></i>
+                                    <p class="mt-2">Rasm mavjud emas</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-7 bg-light">
+                            <div class="card-body p-4 p-md-5">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <span class="badge bg-success mb-2 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-robot me-1"></i> AI Tavsiyasi</span>
+                                        <h2 class="fw-bold mb-0 text-dark">{{ item.brand_name }} {{ item.model_name }}</h2>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="d-block text-muted small">Topilgan narx</span>
+                                        <h2 class="text-primary fw-bold mb-0">${{ item.global_price|default:item.max_price }}</h2>
+                                    </div>
+                                </div>
+                                
+                                <div class="row g-3 mb-4 mt-2">
+                                    <div class="col-6">
+                                        <div class="p-3 bg-white rounded-3 shadow-sm text-center h-100 border border-light d-flex flex-column justify-content-center">
+                                            <i class="bi bi-cpu fs-4 text-primary mb-1"></i>
+                                            <span class="small fw-bold text-secondary">Protsessor</span>
+                                            <span class="mt-1 fw-bold text-dark" style="font-size: 0.95rem;">
+                                                {% if item.cpu and item.cpu != 'None' %}{{ item.cpu }}{% else %}Ma'lumot yo'q{% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 bg-white rounded-3 shadow-sm text-center h-100 border border-light d-flex flex-column justify-content-center">
+                                            <i class="bi bi-speedometer2 fs-4 text-danger mb-1"></i>
+                                            <span class="small fw-bold text-secondary">AnTuTu Ball</span>
+                                            <span class="mt-1 fw-bold text-dark" style="font-size: 0.95rem;">
+                                                {% if item.antutu_score %}{{ item.antutu_score }}{% else %}Ma'lumot yo'q{% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 bg-white rounded-3 shadow-sm text-center h-100 border border-light d-flex flex-column justify-content-center">
+                                            <i class="bi bi-memory fs-4 text-success mb-1"></i>
+                                            <span class="small fw-bold text-secondary">RAM</span>
+                                            <span class="mt-1 fw-bold text-dark" style="font-size: 0.95rem;">
+                                                {% if item.ram and item.ram != 'None' %}{{ item.ram }}{% else %}Ma'lumot yo'q{% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 bg-white rounded-3 shadow-sm text-center h-100 border border-light d-flex flex-column justify-content-center">
+                                            <i class="bi bi-gpu-card fs-4 text-warning mb-1"></i>
+                                            <span class="small fw-bold text-secondary">Grafika (GPU)</span>
+                                            <span class="mt-1 fw-bold text-dark" style="font-size: 0.95rem;">
+                                                {% if item.gpu and item.gpu != 'None' %}{{ item.gpu }}{% else %}Ma'lumot yo'q{% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-info border-0 shadow-sm rounded-3 mt-4" style="background-color: #e0f7fa;">
+                                    <h6 class="alert-heading fw-bold text-dark"><i class="bi bi-info-circle-fill text-info me-2"></i>Nima uchun bu model?</h6>
+                                    <p class="mb-0 text-dark small" style="line-height: 1.6;">{{ item.description }}</p>
+                                </div>
+                                
+                                <div class="mt-4 pt-2">
+                                    <a href="{% url 'price_search_page' %}" class="btn btn-outline-secondary px-4 w-100 rounded-pill shadow-sm"><i class="bi bi-arrow-left me-2"></i>Boshqa budjetda qidirish</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5 bg-white shadow-sm rounded-4 border border-light p-5">
+                    <div class="display-1 text-muted mb-4"><i class="bi bi-search"></i></div>
+                    <h2 class="fw-bold text-dark mb-3">Tavsiya topilmadi</h2>
+                    <p class="text-muted fs-5 mb-4">Siz kiritgan <strong>${{ max_price }}</strong> budjetda qidiruv mezonlariga mos keladigan eng yaxshi smartfon hozircha topilmadi.</p>
+                    <a href="{% url 'price_search_page' %}" class="btn btn-primary btn-lg px-5 rounded-pill shadow"><i class="bi bi-arrow-left me-2"></i>Orqaga qaytish</a>
+                </div>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

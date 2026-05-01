@@ -1,0 +1,73 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.custom-navbar {
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+    background-color: var(--bg-header-footer, #ffffff);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.brand-text {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-color, #1a1a1a);
+    letter-spacing: -0.5px;
+    text-decoration: none;
+}
+
+.nav-custom-link {
+    color: var(--text-color, #6b7280);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+.nav-custom-link:hover {
+    color: #2563eb !important;
+}
+
+
+#theme-toggle {
+    cursor: pointer;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #93c5fd;
+    border-radius: 12px;
+    background: transparent;
+    color: #3b82f6;
+    transition: all 0.2s ease;
+}
+#theme-toggle:hover {
+    background: #eff6ff;
+    transform: translateY(-2px);
+}
+
+
+.admin-circle-btn {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #4ade80;
+    color: white;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.admin-circle-btn:hover {
+    transform: scale(1.05);
+    color: white;
+    background-color: #22c55e;
+}
+
+/* Footer qismlari */
+.features-icons { padding-top: 5rem; padding-bottom: 5rem; }
+.features-icons-item { max-width: 20rem; }
+.features-icons-icon { height: 7rem; display: flex; align-items: center; justify-content: center; }
+.features-icons-icon i { font-size: 4.5rem; }

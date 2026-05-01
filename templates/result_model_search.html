@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="{% static 'css/result_model_search.css' %}" rel="stylesheet" />
+<div class="result-container py-5">
+    <div class="container">
+        {% if results %}
+            {% with phone=results.first %}
+            <div class="card tech-card p-4">
+                <div class="row g-4">
+                    
+                    <div class="col-lg-4 text-center border-end border-secondary border-opacity-25">
+                        <div class="image-container mb-4">
+                           <img src="{{ phone.image_url }}" 
+                                class="img-fluid rounded" 
+                                style="max-height: 400px; object-fit: contain;" 
+                                onerror="this.onerror=null; this.src='{% static "images/logo.png" %}';">
+                        </div>
+
+                        <div class="info-card-left text-start">
+                            <div class="release-info">
+                                <span class="price-label d-block mb-1">Taqdimot sanasi:</span>
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <span class="fw-bold">{{ phone.release_date|date:"d-F, Y" }}</span>
+                                    
+                                    {% now "Y-m-d" as today %}
+                                    {% if phone.release_date|date:"Y-m-d" > today %}
+                                        <span class="status-indicator status-upcoming"><i class="bi bi-clock-history"></i> Kutilmoqda</span>
+                                    {% else %}
+                                        <span class="status-indicator status-released"><i class="bi bi-check-circle-fill"></i> Sotuvda</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="price-box">
+                                <div class="price-row">
+                                    <span class="price-label"><i class="bi bi-globe me-1"></i> Global:</span>
+                                    <span class="price-value global">{{ phone.global_price|default:"-" }}</span>
+                                </div>
+                                <div class="price-row">
+                                    <span class="price-label"><i class="bi bi-shop me-1"></i> O'zbekiston:</span>
+                                    <span class="price-value uzb">{{ phone.uzb_price|default:"-" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    
+                        <div class="mt-4 text-start p-3 bg-dark bg-opacity-25 rounded-4">
+                            <h6 class="mb-3 fw-bold"><i class="bi bi-people me-2"></i>Foydalanuvchilar fikri</h6>
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between small"><span>Ijobiy</span><span>{{ phone.user_feedback.yaxshi }}%</span></div>
+                                <div class="rating-bar"><div class="bar-fill bg-success" style="width: {{ phone.user_feedback.yaxshi }}%"></div></div>
+                            </div>
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between small"><span>O'rtacha</span><span>{{ phone.user_feedback.ortacha }}%</span></div>
+                                <div class="rating-bar"><div class="bar-fill bg-warning" style="width: {{ phone.user_feedback.ortacha }}%"></div></div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between small"><span>Salbiy</span><span>{{ phone.user_feedback.yomon }}%</span></div>
+                                <div class="rating-bar"><div class="bar-fill bg-danger" style="width: {{ phone.user_feedback.yomon }}%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+        
+                    <div class="col-lg-8 ps-lg-5">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div>
+                                <span class="badge bg-primary mb-2">{{ phone.brand.name }}</span>
+                                <h1 class="fw-black mb-0 display-5">{{ phone.model_name }}</h1>
+                            </div>
+                            <div class="text-end">
+                                <span class="spec-label">AnTuTu Score</span>
+                                <h3 class="text-primary fw-bold mb-0">{{ phone.antutu_score }}</h3>
+                            </div>
+                        </div>
+
+                        <div class="spec-grid mb-4">
+                            <div class="spec-box"><i class="bi bi-cpu"></i><span class="spec-title">CPU</span><span class="spec-value">{{ phone.cpu|default:"-" }}</span></div>
+                            <div class="spec-box"><i class="bi bi-gpu-card"></i><span class="spec-title">GPU</span><span class="spec-value">{{ phone.gpu|default:"-" }}</span></div>
+                            <div class="spec-box"><i class="bi bi-memory"></i><span class="spec-title">RAM</span><span class="spec-value">{{ phone.ram }}</span></div>
+                            <div class="spec-box"><i class="bi bi-hdd-network"></i><span class="spec-title">Xotira</span><span class="spec-value">{{ phone.storage }}</span></div>
+                            <div class="spec-box"><i class="bi bi-camera"></i><span class="spec-title">Asosiy</span><span class="spec-value">{{ phone.camera_mp }}</span></div>
+                            <div class="spec-box"><i class="bi bi-camera-video"></i><span class="spec-title">Selfi</span><span class="spec-value">{{ phone.old_camera|default:"-" }}</span></div>
+                            <div class="spec-box"><i class="bi bi-battery-charging"></i><span class="spec-title">Batareya</span><span class="spec-value">{{ phone.battery_capacity }} mAh</span></div>
+                            <div class="spec-box"><i class="bi bi-calendar-check"></i><span class="spec-title">Yili</span><span class="spec-value">{% if phone.release_date %}{{ phone.release_date|date:"Y" }}{% else %}-{% endif %}</span></div>
+                        </div>
+
+                        {% if phone.special_features %}
+                        <div class="mb-4">
+                            <h6 class="fw-bold"><i class="bi bi-plus-circle me-2 text-info"></i>Qo'shimcha imkoniyatlar:</h6>
+                            <p class="small opacity-75">{{ phone.special_features }}</p>
+                        </div>
+                        {% endif %}
+
+                        <div class="expert-block mt-4">
+                            <h5 class="fw-bold text-primary mb-3"><i class="bi bi-stars me-2"></i>AI EKSPERT MASLAHATI</h5>
+                            <div class="ai-content" style="white-space: pre-line;">
+                                {{ ai_message }}
+                            </div>
+                        </div>
+
+                        <div class="mt-5 pt-4 border-top border-secondary border-opacity-25 d-flex flex-wrap gap-3">
+                            <a href="{% url 'model_search_page' %}" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm">
+                                <i class="bi bi-search me-2"></i>Yangi qidiruv
+                            </a>
+                            <a href="{% url 'home_page' %}" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                                <i class="bi bi-house-door me-2"></i>Bosh sahifa
+                            </a>
+                            <button onclick="window.print()" class="btn btn-outline-info rounded-pill px-4 py-2 ms-auto">
+                                <i class="bi bi-printer me-2"></i>PDF yuklash
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endwith %}
+        {% else %}
+            <div class="alert alert-custom text-center p-5">
+                <h4>Ma'lumot topilmadi</h4>
+                <a href="{% url 'model_search_page' %}" class="btn btn-primary mt-3">Qayta qidirish</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

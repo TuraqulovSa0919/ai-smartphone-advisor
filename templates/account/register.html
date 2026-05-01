@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-lg border-0" style="width: 100%; max-width: 450px; border-radius: 24px; background-color: #1a252f;">
+        <div class="card-body p-5 text-center">
+                     
+            <div class="mb-4">
+                <div class="display-4 text-primary mb-3">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+                <h2 class="fw-bold text-white">Ro'yxatdan o'tish</h2>
+                <p class="text-muted small">AI Phone Advisor tizimiga qo'shiling</p>
+            </div>
+
+            <form method="post" class="text-start">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label text-light small fw-semibold">{{ field.label }}:</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <div class="form-text text-muted" style="font-size: 0.75rem;">{{ field.help_text|safe }}</div>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold mt-3" style="border-radius: 12px; letter-spacing: 1px;">
+                    RO'YXATDAN O'TISH
+                </button>
+            </form>
+            <div class="mt-4 pt-3 border-top border-secondary">
+                <p class="text-muted small">
+                    Profilingiz bormi? 
+                    <a href="{% url 'login' %}" class="text-primary fw-bold text-decoration-none">Kiring</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<style>
+    form input {
+        width: 100%;
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px solid #2c3e50;
+        background-color: #2c3e50;
+        color: white;
+    }
+    form input:focus {
+        outline: none;
+        border-color: #0d6efd;
+        background-color: #34495e;
+    }
+
+    form ul {
+        list-style: none;
+        padding: 0;
+        margin: 5px 0;
+        color: #888;
+        font-size: 0.8rem;
+    }
+</style>
+{% endblock %}

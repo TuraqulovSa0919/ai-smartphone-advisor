@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex flex-column" style="min-height: calc(100vh - 150px);"> 
+    
+    <header class="masthead d-flex align-items-center" 
+            style="background: var(--main-bg); padding: 100px 0; transition: all 0.4s ease;">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-xl-8">
+                    <h1 class="mb-4 fw-bold hero-title" style="color: var(--text-color); font-size: 3rem;">
+                        Budjetingizga mos eng yaxshi variantni toping
+                    </h1>
+                    
+                    <form action="{% url 'result_price_search_page' %}" method="GET" 
+                          class="p-4 rounded-4 shadow-lg text-start"
+                          style="background: var(--bg-header-footer); border: 1px solid rgba(255,255,255,0.1);">
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <label class="form-label small text-uppercase fw-bold opacity-75" style="color: var(--text-color);">Budjet ($)</label>
+                                <input class="form-control form-control-lg" name="max_price" type="number" placeholder="500" required
+                                       style="background: var(--main-bg); color: var(--text-color); border: 1px solid rgba(255,255,255,0.1);">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-uppercase fw-bold opacity-75" style="color: var(--text-color);">Maqsad</label>
+                                <select class="form-select form-select-lg" name="usage"
+                                        style="background: var(--main-bg); color: var(--text-color); border: 1px solid rgba(255,255,255,0.1);">
+                                    <option value="">Tanlang...</option>
+                                    <option value="gaming">O'yin</option>
+                                    <option value="camera">Kamera</option>
+                                    <option value="balanced">Balanslashgan</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button class="btn btn-primary btn-lg w-100 fw-bold" type="submit">AI Maslahat</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow-1" style="background: var(--main-bg);">
+        <div class="container">
+             {% if recommendation or results %}
+                {% endif %}
+        </div>
+    </main>
+
+</div>
+
+<style>
+    .masthead {
+        border-bottom: none;
+    }
+    body {
+        background: var(--main-bg) !important;
+    }
+    [data-bs-theme="dark"] .hero-title {
+        text-shadow: none !important;
+    }
+</style>
+{% endblock %}
