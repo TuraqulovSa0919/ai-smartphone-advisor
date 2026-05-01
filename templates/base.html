@@ -7,7 +7,6 @@
     <title>AI Phone Advisor - Diplom Ishi</title>
     
     <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,19 +16,19 @@
 <body class="d-flex flex-column min-vh-100">
     
     <nav class="navbar navbar-expand-lg custom-navbar shadow-sm sticky-top"> 
-        <div class="container-fluid px-md-5"> 
+        <div class="container-fluid px-2 px-md-5"> <!-- Telefonda chekkalarni bir oz kengaytirdik -->
             
             <a class="navbar-brand d-flex align-items-center" href="{% url 'home_page' %}">
                 <img src="{% static 'images/logo.png' %}" alt="Logo" class="me-2" style="height: 32px; border-radius: 6px;">
                 <span class="brand-text">AI Phone Advisor</span>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto me-auto gap-1 gap-lg-3">
+                <ul class="navbar-nav ms-auto me-auto gap-1 gap-lg-3 py-3 py-lg-0"> <!-- Telefonda menyular orasini ochdik -->
                     <li class="nav-item">
                         <a class="nav-link nav-custom-link px-2 d-flex align-items-center" href="{% url 'home_page' %}">
                             <i class="bi bi-house-door text-info me-2 fs-6"></i> Bosh sahifa
@@ -52,9 +51,10 @@
                     </li>
                 </ul>
 
-                <div class="d-flex align-items-center gap-2 gap-lg-3 mt-3 mt-lg-0">
+                <!-- Foydalanuvchi qismi: Telefonda ustma-ust tushishi uchun flex-wrap va gap qo'shildi -->
+                <div class="d-flex flex-wrap align-items-center gap-2 gap-lg-3 pb-3 pb-lg-0">
                     
-                    <button id="theme-toggle" title="Rejimni o'zgartirish">
+                    <button id="theme-toggle" title="Rejimni o'zgartirish" class="btn btn-link p-2">
                         <i id="theme-icon" class="bi bi-moon-stars-fill fs-5"></i>
                     </button>
 
@@ -66,7 +66,6 @@
                             <span>{{ user.username }}</span>
                         </a>
 
-
                         <a class="nav-link d-flex align-items-center justify-content-center px-3 py-2" 
                            href="{% url 'logout' %}" 
                            title="Tizimdan chiqish"
@@ -75,7 +74,8 @@
                         </a>
                         
                         {% if user.is_staff %}
-                            <a class="admin-circle-btn" href="/admin/" title="Admin Panel" style="background: #dc3545 !important;">
+                            <a class="admin-circle-btn d-flex align-items-center justify-content-center" href="/admin/" title="Admin Panel" 
+                               style="background: #dc3545 !important; width: 40px; height: 40px; border-radius: 50%; color: white;">
                                 <i class="bi bi-shield-lock-fill fs-5"></i>
                             </a>
                         {% endif %}
@@ -98,70 +98,34 @@
     </main>
 
     <footer class="footer mt-auto" style="background-color: var(--bg-header-footer, transparent);"> 
+        <!-- Footer kodi o'zgarishsiz qolishi mumkin, u Bootstrap row/col bilan yaxshi yozilgan -->
         <div class="container-fluid px-md-5">
             <div class="row text-center py-4">
-                <div class="col-lg-4 mb-3 mb-lg-0">
-                    <div class="features-icons-item mx-auto">
-                        <div class="features-icons-icon mb-2 text-primary">
-                            <i class="bi-cpu fs-2"></i> 
-                        </div>
-                        <h6 class="fw-bold mb-1" style="color: var(--text-color);">AI Tahlil</h6>
-                        <p class="small mb-0" style="color: var(--text-color); opacity: 0.7;">AI algoritmlari orqali baholaymiz.</p>
-                    </div>
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <i class="bi-cpu fs-2 text-primary"></i> 
+                    <h6 class="fw-bold mb-1">AI Tahlil</h6>
+                    <p class="small mb-0 opacity-70">AI algoritmlari orqali baholaymiz.</p>
                 </div>
-
-                <div class="col-lg-4 mb-3 mb-lg-0">
-                    <div class="features-icons-icon mb-2 text-primary">
-                        <i class="bi-cash-stack fs-2"></i>
-                    </div>
-                    <h6 class="fw-bold mb-1" style="color: var(--text-color);">Narx Nazorati</h6>
-                    <p class="small mb-0" style="color: var(--text-color); opacity: 0.7;">Hamyonbop narxlarni filtrlaymiz.</p>
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <i class="bi-cash-stack fs-2 text-primary"></i>
+                    <h6 class="fw-bold mb-1">Narx Nazorati</h6>
+                    <p class="small mb-0 opacity-70">Hamyonbop narxlarni filtrlaymiz.</p>
                 </div>
-
                 <div class="col-lg-4">
-                    <div class="features-icons-icon mb-2 text-primary">
-                        <i class="bi-phone fs-2"></i>
-                    </div>
-                    <h6 class="fw-bold mb-1" style="color: var(--text-color);">Keng tanlov</h6>
-                    <p class="small mb-0" style="color: var(--text-color); opacity: 0.7;">Eng so'nggi modellar bitta joyda.</p>
+                    <i class="bi-phone fs-2 text-primary"></i>
+                    <h6 class="fw-bold mb-1">Keng tanlov</h6>
+                    <p class="small mb-0 opacity-70">Eng so'nggi modellar bitta joyda.</p>
                 </div>
             </div>
-
-            <div class="row pb-3 border-top pt-3" style="border-color: rgba(128,128,128,0.2) !important;">
-                <div class="col-12 text-center">
-                    <p class="small mb-0" style="color: var(--text-color); opacity: 0.7;">
-                        &copy; 2026 AI Phone Advisor. Sardorbekning diplom loyihasi.
-                    </p>
+            <div class="row pb-3 border-top pt-3 text-center" style="border-color: rgba(128,128,128,0.2) !important;">
+                <div class="col-12">
+                    <p class="small mb-0 opacity-70">&copy; 2026 AI Phone Advisor. Sardorbekning diplom loyihasi.</p>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script>
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-        const htmlElement = document.documentElement;
-
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            htmlElement.setAttribute('data-theme', 'light');
-            themeIcon.classList.replace('bi-moon-stars-fill', 'bi-sun-fill');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            const isLight = htmlElement.getAttribute('data-theme') === 'light';
-            if (isLight) {
-                htmlElement.removeAttribute('data-theme');
-                themeIcon.classList.replace('bi-sun-fill', 'bi-moon-stars-fill');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                htmlElement.setAttribute('data-theme', 'light');
-                themeIcon.classList.replace('bi-moon-stars-fill', 'bi-sun-fill');
-                localStorage.setItem('theme', 'light');
-            }
-        });
-    </script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Mavzu skripti shu yerda qoladi -->
 </body>
 </html>
