@@ -98,7 +98,6 @@ def get_budget_recommendation(max_price, usage, all_brands):
         print(f"AI Tavsiya Xatosi: {e}")
         return None
     
-    
 def get_internet_recommendation(price, usage):
     usage_map = {
         'gaming': "o'yin o'ynash (eng yuqori unumdorlik, eng katta AnTuTu bali)",
@@ -110,26 +109,32 @@ def get_internet_recommendation(price, usage):
     
     prompt = f"""
     Bugungi sana: 2026-yil.
-    Vazifa: Google Search orqali internetdan QAT'IY RAVISHDA ${price} budjetdan OSHMAYDIGAN (masalan ${min_price} - ${price} oralig'ida), {usage_map.get(usage, 'umumiy')} maqsadlar uchun ENG KUCHLI va YANGI smartfonni top.
+    Vazifa: Google Search orqali ${min_price} - ${price} oralig'ida, {usage_map.get(usage, 'umumiy')} maqsadlar uchun ENG YAXSHI 3 ta smartfonni top.
     
     QAT'IY SHARTLAR:
-    1. NARX CHEKLOVI: Narx hech qachon ${price} dan oshmasligi shart! ${price} dan arzon yoki aynan shunga teng bo'lsin.
-    2. TARKIBI TO'LIQ BO'LSIN: "cpu", "gpu", "ram", "antutu" maydonlari bo'sh qolmasin.
-    3. RAM VA XOTIRA: Qurilma qo'llab-quvvatlaydigan barcha RAM variantlarini yoz (masalan: "8/12/16 GB").
-    4. BREND VA MODEL: "brand" qismiga faqat brendni (masalan "Xiaomi"), "model" qismiga qolganini ("15") yoz. "Xiaomi Xiaomi 15" bo'lib takrorlanmasin.
+    1. NARX CHEKLOVI: Narx hech qachon ${price} dan oshmasligi shart!
+    2. 3 TA TURLI MODEL: Har xil brendlardan bo'lishi afzal (masalan: Samsung, Xiaomi, OnePlus) yoki boshqa.
+    3. "image_url": "GSMArena yoki rasmiy saytdan to'g'ridan to'g'ri .jpg/.png link. Ishonchsiz bo'lsa N/A yoz"
+    4. TARKIBI TO'LIQ: "cpu", "gpu", "ram", "antutu" maydonlari bo'sh qolmasin.
+    5. BREND VA MODEL: "brand" faqat brend ("Xiaomi"), "model" qolgan qismi ("15").
+    6. TARTIBLASH: Eng kuchligidan boshlab tartiblangan bo'lsin.
     
-    Javobni FAQAT JSON formatida qaytar (boshqa matn yozma):
-    {{
-        "brand": "Brend nomi",
-        "model": "Model nomi",
-        "cpu": "Protsessor nomi (masalan, Snapdragon 8 Gen 3)",
-        "gpu": "Grafika nomi (masalan, Adreno 750)",
-        "ram": "8/12/16 GB",
-        "antutu": 2000000,
-        "price": Haqiqiy narxi (faqat son, belgisiz),
-        "reason": "Nima uchun tanlandi? Qisqa izoh.",
-        "image_url": "Rasmiy .jpg yoki .png rasm linki"
-    }}
+    Javobni FAQAT JSON array formatida qaytar (boshqa matn yozma):
+    [
+        {{
+            "brand": "Brend nomi",
+            "model": "Model nomi",
+            "cpu": "Protsessor nomi",
+            "gpu": "Grafika nomi",
+            "ram": "8/12/16 GB",
+            "antutu": 2000000,
+            "price": 499,
+            "reason": "Nima uchun tanlandi? Qisqa izoh.",
+            "image_url": "Rasmiy .jpg yoki .png rasm linki yoki N/A"
+        }},
+        {{ ... }},
+        {{ ... }}
+    ]
     """
     
     try:
@@ -143,10 +148,13 @@ def get_internet_recommendation(price, usage):
         )
         
         cleaned_text = response.text.replace('```json', '').replace('```', '').strip()
-        match = re.search(r'\{.*\}', cleaned_text, re.DOTALL)
+        # Array topish
+        match = re.search(r'\[.*\]', cleaned_text, re.DOTALL)
         if match:
-            return json.loads(match.group(0))
-        return None
+            data = json.loads(match.group(0))
+            # Maksimal 3 ta
+            return data[:3] if isinstance(data, list) else []
+        return []
     except Exception as e:
         print(f"AI Narx Tavsiyasi Xatosi: {e}")
-        return None
+        return []

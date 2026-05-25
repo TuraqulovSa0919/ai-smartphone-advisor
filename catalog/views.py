@@ -6,8 +6,32 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm  
 from django.contrib import messages 
 from .models import Smartphone, Brand, AIPriceRecommendation
-from .services import get_phone_ai_analysis, get_budget_recommendation, get_internet_recommendation
+from .services import get_phone_ai_analysis, get_internet_recommendation
 
+
+PRICE_BUCKETS = [
+    100, 150, 200, 250, 300, 350, 400, 450, 500,
+    550, 600, 650, 700, 750, 800, 850, 900, 950,
+    1000, 1100, 1200, 1300, 1400, 1500, 1600, 
+    1700, 1800, 1900, 2000, 2200
+]
+
+MIN_PRICE = 100
+MAX_PRICE = 2200
+
+def get_price_bucket(price):
+    """
+    Narxni eng yaqin chelakka solish.
+    100 dan past → rad etiladi (None qaytaradi)
+    2200 dan yuqori → 2200 ga cheklanadi
+    """
+    if price < MIN_PRICE:
+        return None  # Rad etish
+    if price > MAX_PRICE:
+        return MAX_PRICE
+    
+    closest = min(PRICE_BUCKETS, key=lambda b: abs(b - price))
+    return closest
 
 
 def home(request):
@@ -15,14 +39,18 @@ def home(request):
     return render(request, 'home.html')
 
 
-
 @login_required(login_url='login')
 def model_search(request):
     return render(request, 'model_search.html')
 
+
 @login_required(login_url='login')
 def price_search(request):
-    return render(request, 'price_search.html')
+    return render(request, 'price_search.html', {
+        'min_price': MIN_PRICE,
+        'max_price': MAX_PRICE,
+    })
+
 
 @login_required(login_url='login')
 def result_model_search(request):
@@ -85,85 +113,129 @@ def result_model_search(request):
         'ai_message': ai_message
     })
 
+
 @login_required(login_url='login')
 def result_price_search(request):
-    max_price = request.GET.get('max_price', 1000)
-    usage = request.GET.get('usage', 'balanced')
+    raw_price = request.GET.get('max_price', '').strip()
+    usage = request.GET.get('usage', '').strip()
+
+
+    error = None
+
+    if not raw_price or not usage:
+        error = "Iltimos, narx va maqsadni kiriting."
+        return render(request, 'price_search.html', {
+            'error': error,
+            'min_price': MIN_PRICE,
+            'max_price_limit': MAX_PRICE,
+        })
 
     try:
-        max_price_float = float(max_price)
+        price_float = float(raw_price)
     except ValueError:
-        max_price_float = 1000.0
+        error = "Narx faqat son bo'lishi kerak."
+        return render(request, 'price_search.html', {
+            'error': error,
+            'min_price': MIN_PRICE,
+            'max_price_limit': MAX_PRICE,
+        })
 
-    existing_rec = AIPriceRecommendation.objects.filter(
-        max_price=max_price_float,
+    if price_float < MIN_PRICE:
+        error = f"${price_float:.0f} — bu narxda sifatli smartfon topilmaydi. Minimal narx: ${MIN_PRICE}."
+        return render(request, 'price_search.html', {
+            'error': error,
+            'min_price': MIN_PRICE,
+            'max_price_limit': MAX_PRICE,
+        })
+
+    if price_float > MAX_PRICE:
+        error = f"${price_float:.0f} — bu narx chegaradan oshib ketdi. Maksimal: ${MAX_PRICE}."
+        return render(request, 'price_search.html', {
+            'error': error,
+            'min_price': MIN_PRICE,
+            'max_price_limit': MAX_PRICE,
+        })
+
+    if usage not in ['gaming', 'camera', 'balanced']:
+        error = "Noto'g'ri maqsad tanlandi."
+        return render(request, 'price_search.html', {
+            'error': error,
+            'min_price': MIN_PRICE,
+            'max_price_limit': MAX_PRICE,
+        })
+
+    bucketed_price = get_price_bucket(price_float)
+
+    existing_recs = AIPriceRecommendation.objects.filter(
+        max_price=bucketed_price,
         usage_goal=usage
-    ).first()
+    )
 
-    if existing_rec:
-        if existing_rec.is_valid():
-            return render(request, 'result_price_search.html', {'results': [existing_rec], 'max_price': max_price, 'usage': usage})
-        else:
-            existing_rec.delete()
+    if existing_recs.count() >= 3 and all(r.is_valid() for r in existing_recs):
+        return render(request, 'result_price_search.html', {
+            'results': list(existing_recs[:3]),
+            'user_price': price_float,
+            'bucketed_price': bucketed_price,
+            'usage': usage,
+        })
+ 
+    existing_recs.delete()
 
-    ai_data = get_internet_recommendation(max_price_float, usage)
-    
-    if ai_data:
-        new_rec, created = AIPriceRecommendation.objects.update_or_create(
-            max_price=max_price_float,
+    ai_data_list = get_internet_recommendation(bucketed_price, usage)
+
+    results = []
+    for ai_data in ai_data_list:
+        rec = AIPriceRecommendation.objects.create(
+            max_price=bucketed_price,
             usage_goal=usage,
-            defaults={
-                'brand_name': ai_data.get('brand', ''),
-                'model_name': ai_data.get('model', ''),
-                'antutu_score': ai_data.get('antutu', 0),
-                'description': ai_data.get('reason', ''),
-                'image_url': ai_data.get('image_url', '')
-            }
+            brand_name=ai_data.get('brand', ''),
+            model_name=ai_data.get('model', ''),
+            antutu_score=ai_data.get('antutu', 0),
+            description=ai_data.get('reason', ''),
+            image_url=ai_data.get('image_url', ''),
         )
-        results = [new_rec]
-    else:
-        results = []
+        results.append(rec)
 
     return render(request, 'result_price_search.html', {
         'results': results,
-        'max_price': max_price,
+        'user_price': price_float,
+        'bucketed_price': bucketed_price,
         'usage': usage,
     })
+
 
 
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('home_page')
-    
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
+            login(request, form.get_user())
             return redirect('home_page')
     else:
         form = AuthenticationForm()
-    
     return render(request, 'account/login.html', {'form': form})
+
 
 def register_view(request):
     if request.user.is_authenticated:
         return redirect('home_page')
-    
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            messages.success(request, "Muvaffaqiyatli ro'yxatdan o'tdingiz! Endi tizimga kiring.")
+            form.save()
+            messages.success(request, "Muvaffaqiyatli ro'yxatdan o'tdingiz!")
             return redirect('login')
     else:
         form = UserCreationForm()
-    
     return render(request, 'account/register.html', {'form': form})
+
 
 @login_required(login_url='login')
 def profile_view(request):
     return render(request, 'account/profile.html')
+
 
 def logout_view(request):
     logout(request)
