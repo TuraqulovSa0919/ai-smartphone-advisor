@@ -124,23 +124,36 @@ body { background: var(--main-bg) !important; }
 </style>
 
 <script>
-// Sahifa qayta yuklanganda tozalash
-window.addEventListener('pageshow', function() {
+function resetUI() {
     document.getElementById('btnText').style.display = 'inline';
     document.getElementById('btnLoading').style.display = 'none';
     document.getElementById('submitBtn').disabled = false;
     document.getElementById('loadingOverlay').style.display = 'none';
     ['step1','step2','step3'].forEach(id => {
-        document.getElementById(id).className = 
-            'badge rounded-pill px-3 py-2';
-        document.getElementById(id).style.background = 
-            'rgba(128,128,128,0.15)';
-        document.getElementById(id).style.color = 'var(--text-color)';
+        const el = document.getElementById(id);
+        el.className = 'badge rounded-pill px-3 py-2';
+        el.style.background = 'rgba(128,128,128,0.15)';
+        el.style.color = 'var(--text-color)';
     });
     document.getElementById('loadingText').textContent = "AI Google'dan qidirmoqda...";
+}
+
+window.addEventListener('pageshow', function(e) {
+    resetUI();
 });
 
-// Narx validatsiyasi (frontend)
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        if (document.getElementById('submitBtn').disabled) {
+            resetUI();
+        }
+    }
+});
+
+window.addEventListener('pagehide', function() {
+    resetUI();
+});
+
 document.getElementById('searchForm').addEventListener('submit', function(e) {
     const price = parseFloat(document.querySelector('input[name="max_price"]').value);
     const usage = document.querySelector('select[name="usage"]').value;
@@ -150,20 +163,18 @@ document.getElementById('searchForm').addEventListener('submit', function(e) {
         alert("Iltimos, maqsadni tanlang!");
         return;
     }
-
     if (price < 100) {
         e.preventDefault();
         alert("$100 dan past narxda sifatli smartfon topilmaydi!");
         return;
     }
-
     if (price > 2200) {
         e.preventDefault();
         alert("Maksimal narx $2200!");
         return;
     }
 
-    // Loading
+    // Loading boshlash
     document.getElementById('btnText').style.display = 'none';
     document.getElementById('btnLoading').style.display = 'inline';
     document.getElementById('submitBtn').disabled = true;

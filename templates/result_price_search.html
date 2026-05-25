@@ -2,14 +2,13 @@
 {% block content %}
 <div class="container py-5">
 
-    <!-- Sarlavha -->
     <div class="row justify-content-center mb-4">
         <div class="col-lg-10 text-center">
             <h2 class="fw-bold" style="color: var(--text-color);">
                 {% if usage == 'gaming' %}🎮 O'yin
                 {% elif usage == 'camera' %}📷 Kamera
                 {% else %}⚖️ Balanslashgan{% endif %}
-                uchun eng yaxshi smartfonlar
+                for eng yaxshi smartfonlar
             </h2>
             <p class="text-muted">
                 Siz kiritgan narx: 
@@ -27,7 +26,6 @@
             <div class="card h-100 shadow border-0 rounded-4 overflow-hidden"
                  style="background: var(--bg-header-footer);">
 
-                <!-- Rasm -->
                 <div class="d-flex align-items-center justify-content-center p-4"
                      style="height: 220px; background: #f8f9fa;">
                     {% if item.image_url and item.image_url != 'None' and item.image_url != 'N/A' and item.image_url != '' %}
@@ -47,7 +45,6 @@
                     {% endif %}
                 </div>
 
-                <!-- Kontent -->
                 <div class="card-body p-4">
                     <span class="badge bg-success mb-2">
                         <i class="bi bi-robot me-1"></i>AI Tavsiyasi
@@ -59,11 +56,40 @@
 
                     <hr style="opacity:0.15;">
 
-                    <!-- Specs -->
                     <div class="row g-2 mb-3">
                         <div class="col-6">
                             <div class="rounded-3 text-center p-2"
-                                 style="background: rgba(128,128,128,0.15);">
+                                 style="background: rgba(128,128,128,0.15); height: 100%;">
+                                <i class="bi bi-cpu text-primary"></i>
+                                <div class="small fw-bold mt-1" style="color: var(--text-color);">CPU</div>
+                                <div class="small text-truncate" style="color: var(--text-color);" title="{{ item.cpu }}">
+                                    {% if item.cpu and item.cpu != 'None' and item.cpu != '' %}{{ item.cpu }}{% else %}—{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="rounded-3 text-center p-2"
+                                 style="background: rgba(128,128,128,0.15); height: 100%;">
+                                <i class="bi bi-gpu-card text-warning"></i>
+                                <div class="small fw-bold mt-1" style="color: var(--text-color);">GPU</div>
+                                <div class="small text-truncate" style="color: var(--text-color);" title="{{ item.gpu }}">
+                                    {% if item.gpu and item.gpu != 'None' and item.gpu != '' %}{{ item.gpu }}{% else %}—{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="rounded-3 text-center p-2"
+                                 style="background: rgba(128,128,128,0.15); height: 100%;">
+                                <i class="bi bi-memory text-success"></i>
+                                <div class="small fw-bold mt-1" style="color: var(--text-color);">RAM</div>
+                                <div class="small" style="color: var(--text-color);">
+                                    {% if item.ram and item.ram != 'None' and item.ram != '' %}{{ item.ram }}{% else %}—{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="rounded-3 text-center p-2"
+                                 style="background: rgba(128,128,128,0.15); height: 100%;">
                                 <i class="bi bi-speedometer2 text-danger"></i>
                                 <div class="small fw-bold mt-1" style="color: var(--text-color);">AnTuTu</div>
                                 <div class="small" style="color: var(--text-color);">
@@ -73,19 +99,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="rounded-3 text-center p-2"
-                                 style="background: rgba(128,128,128,0.15);">
-                                <i class="bi bi-cash text-success"></i>
-                                <div class="small fw-bold mt-1" style="color: var(--text-color);">Narx oralig'i</div>
-                                <div class="small" style="color: var(--text-color);">
-                                    ${{ bucketed_price }}
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
-                    <!-- Sabab -->
                     <div class="rounded-3 p-3"
                          style="background: rgba(13,202,240,0.12); border: 1px solid rgba(13,202,240,0.25);">
                         <small style="color: var(--text-color); line-height: 1.6;">

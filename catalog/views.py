@@ -118,8 +118,6 @@ def result_model_search(request):
 def result_price_search(request):
     raw_price = request.GET.get('max_price', '').strip()
     usage = request.GET.get('usage', '').strip()
-
-
     error = None
 
     if not raw_price or not usage:
@@ -164,6 +162,7 @@ def result_price_search(request):
             'max_price_limit': MAX_PRICE,
         })
 
+    # ✅ Validatsiya tugadi, endi asosiy logika
     bucketed_price = get_price_bucket(price_float)
 
     existing_recs = AIPriceRecommendation.objects.filter(
@@ -178,10 +177,31 @@ def result_price_search(request):
             'bucketed_price': bucketed_price,
             'usage': usage,
         })
- 
+
     existing_recs.delete()
 
-    ai_data_list = get_internet_recommendation(bucketed_price, usage)
+    from django.core.cache import cache
+    cache_key = f"ai_request_{bucketed_price}_{usage}"
+
+    if cache.get(cache_key):
+        return render(request, 'price_search.html', {
+            'error': "Hozir boshqa so'rov bajarilmoqda, biroz kuting.",
+            'min_price': MIN_PRICE,
+            'max_price_limit': MAX_PRICE,
+        })
+
+    cache.set(cache_key, True, timeout=60)
+
+    try:
+        ai_data_list = get_internet_recommendation(bucketed_price, usage)
+    except Exception as e:
+        return render(request, 'price_search.html', {
+            'error': "AI xizmatida xatolik yuz berdi. Qayta urinib ko'ring.",
+            'min_price': MIN_PRICE,
+            'max_price_limit': MAX_PRICE,
+        })
+    finally:
+        cache.delete(cache_key)
 
     results = []
     for ai_data in ai_data_list:
@@ -190,9 +210,13 @@ def result_price_search(request):
             usage_goal=usage,
             brand_name=ai_data.get('brand', ''),
             model_name=ai_data.get('model', ''),
-            antutu_score=ai_data.get('antutu', 0),
+            cpu=ai_data.get('cpu', ''),
+            gpu=ai_data.get('gpu', ''),
+            ram=ai_data.get('ram', ''),
+            antutu_score=ai_data.get('antutu', 0) or 0,
+            global_price=ai_data.get('price', None),
             description=ai_data.get('reason', ''),
-            image_url=ai_data.get('image_url', ''),
+            image_url=ai_data.get('image_url', '') or '',
         )
         results.append(rec)
 
@@ -202,8 +226,6 @@ def result_price_search(request):
         'bucketed_price': bucketed_price,
         'usage': usage,
     })
-
-
 
 def login_view(request):
     if request.user.is_authenticated:
