@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm  
 from django.contrib import messages 
-from .models import Smartphone, Brand, AIPriceRecommendation
+from .models import Smartphone, Brand, AIPriceRecommendation, ContactMessage
 from .services import get_phone_ai_analysis, get_internet_recommendation
 
 
@@ -262,3 +262,19 @@ def profile_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home_page')
+
+
+
+
+def contact(request):
+    if request.method == 'POST':
+        ContactMessage.objects.create(
+            first_name = request.POST.get('first_name', ''),
+            last_name  = request.POST.get('last_name', ''),
+            email      = request.POST.get('email', ''),
+            subject    = request.POST.get('subject', ''),
+            message    = request.POST.get('message', ''),
+        )
+        messages.success(request, "Xabar yuborildi!")
+        return redirect('contact')
+    return render(request, 'account/contact.html')

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Brand, Smartphone, AIPriceRecommendation
+from .models import Brand, Smartphone, AIPriceRecommendation, ContactMessage
 
 
 admin.site.register(Brand)
@@ -74,3 +74,13 @@ class AIPriceRecommendationAdmin(admin.ModelAdmin):
     
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
+
+
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display  = ('first_name', 'last_name', 'email', 'subject', 'created_at', 'is_read')
+    list_filter   = ('is_read',)
+    search_fields = ('first_name', 'email', 'subject')
+    readonly_fields = ('first_name', 'last_name', 'email', 'subject', 'message', 'created_at')
