@@ -12,21 +12,19 @@ from .services import get_phone_ai_analysis, get_internet_recommendation
 PRICE_BUCKETS = [
     100, 150, 200, 250, 300, 350, 400, 450, 500,
     550, 600, 650, 700, 750, 800, 850, 900, 950,
-    1000, 1100, 1200, 1300, 1400, 1500, 1600, 
-    1700, 1800, 1900, 2000, 2200
+    1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700  
 ]
-
 MIN_PRICE = 100
-MAX_PRICE = 2200
+MAX_PRICE = 1700
 
 def get_price_bucket(price):
     """
     Narxni eng yaqin chelakka solish.
     100 dan past → rad etiladi (None qaytaradi)
-    2200 dan yuqori → 2200 ga cheklanadi
+    1700 dan yuqori → 1700 dan yuqori  cheklanadi (rad etiladi)
     """
     if price < MIN_PRICE:
-        return None  # Rad etish
+        return None  
     if price > MAX_PRICE:
         return MAX_PRICE
     
@@ -162,7 +160,6 @@ def result_price_search(request):
             'max_price_limit': MAX_PRICE,
         })
 
-    # ✅ Validatsiya tugadi, endi asosiy logika
     bucketed_price = get_price_bucket(price_float)
 
     existing_recs = AIPriceRecommendation.objects.filter(
@@ -195,6 +192,7 @@ def result_price_search(request):
     try:
         ai_data_list = get_internet_recommendation(bucketed_price, usage)
     except Exception as e:
+        cache.delete(cache_key)
         return render(request, 'price_search.html', {
             'error': "AI xizmatida xatolik yuz berdi. Qayta urinib ko'ring.",
             'min_price': MIN_PRICE,
@@ -202,6 +200,13 @@ def result_price_search(request):
         })
     finally:
         cache.delete(cache_key)
+
+    if not ai_data_list:
+        return render(request, 'price_search.html', {
+            'error': "AI hozircha natija topa olmadi. Qayta urinib ko'ring.",
+            'min_price': MIN_PRICE,
+            'max_price_limit': MAX_PRICE,
+        })
 
     results = []
     for ai_data in ai_data_list:
@@ -262,8 +267,6 @@ def profile_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home_page')
-
-
 
 
 def contact(request):

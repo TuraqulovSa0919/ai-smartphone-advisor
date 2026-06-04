@@ -105,19 +105,22 @@ def get_internet_recommendation(price, usage):
         'balanced': "har tomonlama muvozanatli (batareya va barqaror ishlash)"
     }
     
-    min_price = max(0, price - 60)
+    min_price = max(0, price - 30)
+    max_price = price
     
     prompt = f"""
     Bugungi sana: 2026-yil.
-    Vazifa: Google Search orqali ${min_price} - ${price} oralig'ida, {usage_map.get(usage, 'umumiy')} maqsadlar uchun ENG YAXSHI 3 ta smartfonni top.
+    Vazifa: Google Search orqali ${min_price} - ${max_price} oralig'ida, {usage_map.get(usage, 'umumiy')} maqsadlar uchun ENG YAXSHI 3 ta smartfonni top.
     
     QAT'IY SHARTLAR:
-    1. NARX CHEKLOVI: Narx hech qachon ${price} dan oshmasligi shart!
+    1. NARX CHEKLOVI: Narx hech qachon ${max_price} dan oshmasligi shart!
     2. 3 TA TURLI MODEL: Har xil brendlardan bo'lishi afzal (masalan: Samsung, Xiaomi, OnePlus) yoki boshqa.
-    3. "image_url": "GSMArena yoki rasmiy saytdan to'g'ridan to'g'ri .jpg/.png link. Ishonchsiz bo'lsa N/A yoz"
+    3. "image_url": GSMArena yoki rasmiy saytdan to'g'ridan to'g'ri .jpg/.png link. Ishonchsiz bo'lsa N/A yoz.
     4. TARKIBI TO'LIQ: "cpu", "gpu", "ram", "antutu" maydonlari bo'sh qolmasin.
     5. BREND VA MODEL: "brand" faqat brend ("Xiaomi"), "model" qolgan qismi ("15").
     6. TARTIBLASH: Eng kuchligidan boshlab tartiblangan bo'lsin.
+    7. TIL: BARCHA matnlar, jumladan "reason" maydoni ham O'ZBEK tilida bo'lsin!
+    8. HAQIQIY NARX: "price" maydoniga telefonning HAQIQIY bozor narxini yoz, ${max_price} emas!
     
     Javobni FAQAT JSON array formatida qaytar (boshqa matn yozma):
     [
@@ -128,8 +131,8 @@ def get_internet_recommendation(price, usage):
             "gpu": "Grafika nomi",
             "ram": "8/12/16 GB",
             "antutu": 2000000,
-            "price": 499,
-            "reason": "Nima uchun tanlandi? Qisqa izoh.",
+            "price": 470,
+            "reason": "Nima uchun tanlandi? O'ZBEK TILIDA qisqa izoh.",
             "image_url": "Rasmiy .jpg yoki .png rasm linki yoki N/A"
         }},
         {{ ... }},
@@ -139,22 +142,24 @@ def get_internet_recommendation(price, usage):
     
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash", 
+            model="gemini-2.5-flash",
             contents=prompt,
             config=types.GenerateContentConfig(
                 tools=[{"google_search": {}}],
                 temperature=0.0
             )
         )
-        
+
         cleaned_text = response.text.replace('```json', '').replace('```', '').strip()
-        # Array topish
         match = re.search(r'\[.*\]', cleaned_text, re.DOTALL)
+
         if match:
             data = json.loads(match.group(0))
-            # Maksimal 3 ta
             return data[:3] if isinstance(data, list) else []
+
+        print("JSON array topilmadi. Raw:", cleaned_text[:500])
         return []
+
     except Exception as e:
         print(f"AI Narx Tavsiyasi Xatosi: {e}")
         return []
