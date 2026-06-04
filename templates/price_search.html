@@ -13,7 +13,7 @@
                     <p class="mb-4 opacity-75" style="color: var(--text-color);">
                         <i class="bi bi-info-circle me-1"></i>
                         Qo'llab-quvvatlanadigan narx oralig'i: 
-                        <strong>${{ min_price }} — ${{ max_price_limit|default:2200 }}</strong>
+                        <strong>${{ min_price }} — ${{ max_price_limit|default:1700 }}</strong>
                     </p>
 
                     <!-- Xato xabari -->
@@ -40,11 +40,11 @@
                                        type="number"
                                        placeholder="500"
                                        min="{{ min_price }}"
-                                       max="{{ max_price_limit|default:2200 }}"
+                                       max="{{ max_price_limit|default:1700 }}"
                                        required
                                        style="background: var(--main-bg); color: var(--text-color); border: 1px solid rgba(255,255,255,0.1);">
                                 <div class="form-text opacity-50" style="color: var(--text-color);">
-                                    Min: ${{ min_price }} / Max: ${{ max_price_limit|default:2200 }}
+                                    Min: ${{ min_price }} / Max: ${{ max_price_limit|default:1700 }}
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -86,7 +86,7 @@
                                     <div class="fw-bold" id="loadingText" style="color: var(--text-color);">
                                         AI Google'dan qidirmoqda...
                                     </div>
-                                    <small class="text-muted">Bu 10-20 soniya vaqt olishi mumkin</small>
+                                    <small class="text-muted">Bu 30-40 soniya vaqt olishi mumkin</small>
                                 </div>
                             </div>
                             <div class="mt-3 d-flex justify-content-center gap-2 flex-wrap">
@@ -168,9 +168,9 @@ document.getElementById('searchForm').addEventListener('submit', function(e) {
         alert("$100 dan past narxda sifatli smartfon topilmaydi!");
         return;
     }
-    if (price > 2200) {
+    if (price > 1700) {
         e.preventDefault();
-        alert("Maksimal narx $2200!");
+        alert("Maksimal narx $1700!");
         return;
     }
 
